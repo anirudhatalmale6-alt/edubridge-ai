@@ -99,8 +99,15 @@ Student Profile:
         'Cache-Control': 'no-cache',
       },
     });
-  } catch (error) {
-    console.error('Chat error:', error);
-    return new Response('Failed to generate response. Please check your OpenAI API key.', { status: 500 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Chat error:', error?.message || error);
+    const key = process.env.OPENAI_API_KEY;
+    const keyInfo = key ? `key set (${key.substring(0, 8)}...${key.substring(key.length - 4)})` : 'key NOT set';
+    console.error('OpenAI config:', keyInfo);
+    return new Response(
+      JSON.stringify({ error: error?.message || 'Unknown error', keyStatus: key ? 'set' : 'missing' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 }

@@ -91,12 +91,14 @@ export default function ChatPage() {
           return updated;
         });
       }
-    } catch {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const errorMsg = err?.message || 'Unknown error';
       setMessages(prev => {
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: 'assistant',
-          content: 'Sorry, I encountered an error. Please make sure the OpenAI API key is configured correctly and try again.',
+          content: `Sorry, I encountered an error: ${errorMsg}`,
         };
         return updated;
       });
